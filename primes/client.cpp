@@ -31,6 +31,9 @@ Client::Client(char** _args, int _argc)
     threadSlider = 1;
     A = 0;
     B = 100;
+    animationFrame = 0;
+    animationDuration = 0.0;
+    animationDurationSum = 0.0;
     duration = 0.0;
 
     // Demonstrate the various window flags. Typically you would just use the default!
@@ -52,6 +55,7 @@ Client::Client(char** _args, int _argc)
     displayReadMe       = false;
     startProcedure      = false;
     startCalculating    = false;
+    showProgress        = false;
 
     window_flags_imGui = 0;
     if (no_titlebar)        window_flags_imGui |= ImGuiWindowFlags_NoTitleBar;
@@ -136,8 +140,8 @@ void Client::drawContent()
     ImGui::Separator();
 
     ImGui::Text("Select Interval:");
-    ImGui::SliderScalar("Begin", ImGuiDataType_U64, &A, &u64_min, &u64_max, "%" IM_PRIu64);
-    ImGui::SliderScalar("End", ImGuiDataType_U64, &B, &u64_min, &u64_max, "%" IM_PRIu64); ImGui::SameLine(); HelpMarker("End must be greater than begin!");
+    ImGui::InputScalar("Begin", ImGuiDataType_U64, &A, true ? &u64_one : NULL);
+    ImGui::InputScalar("End", ImGuiDataType_U64, &B, true ? &u64_one : NULL); ImGui::SameLine(); HelpMarker("End must be greater than begin!");
     ImGui::Separator();
 }
 
@@ -165,42 +169,99 @@ void Client::drawReadmeFrame()
     ImGui::End();
 }
 
+void Client::callComputing()
+{
+    this->duration = 0.0;
+
+    auto t1 = std::chrono::high_resolution_clock::now();    // TODO timer!
+    if (libSelection)
+        model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "C++");
+    else
+        model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "ASM");
+    auto t2 = std::chrono::high_resolution_clock::now();
+    this->duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
+    showProgress = false;
+}
+
 void Client::drawComputingFrame()
 {
-    //viewport = ImGui::GetMainViewport();
-    //ImGui::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
-    //ImGui::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
+    viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
+    ImGui::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
 
-    //ImGui::Begin("Computing...", NULL, window_flags_imGui);
+    ImGui::Begin("Computing...", NULL, window_flags_imGui);
     //std::vector<double> times;
 
     std::string tmp0("Calling for ->\t");
+    std::string tmp1("Time ->\t");
+    std::string tmp2("");
+    std::vector<char> animation({ '-', '\\', '|' , '/' });
+    size_t i = 0;
+
     tmp0 += ( libSelection ? "C/C++" : "ASM");
     ImGui::Text(tmp0.c_str());
     ImGui::Separator();
 
     if (startCalculating)
     {
-        auto t1 = std::chrono::high_resolution_clock::now();    // TODO timer!
-        if (libSelection)
-            model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "C++");
-        else
-            model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "ASM");
-        auto t2 = std::chrono::high_resolution_clock::now();
-        duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
+        animationDurationSum = 0.0;
+        animationDuration = ImGui::GetTime();
+        taskCalculating = std::thread(&Client::callComputing, this);
+        taskCalculating.detach();
         startCalculating = false;
+        showProgress = true;
     }
+    //taskCalculating
+    //taskCalculating.detach();
 
-    std::string tmp1("Time ->\t");
-    tmp1 += std::to_string(duration);
-    tmp1 += "[s]";
-    ImGui::Text(tmp1.c_str());
+    //if (startCalculating)
+    //{
+    //    auto t1 = std::chrono::high_resolution_clock::now();    // TODO timer!
+    //    if (libSelection)
+    //        model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "C++");
+    //    else
+    //        model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "ASM");
+    //    auto t2 = std::chrono::high_resolution_clock::now();
+    //    duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
+    //    startCalculating = false;
+    //}
+
+    if (showProgress)
+    {
+        auto t1 = ImGui::GetTime();
+
+        animationDuration = t1 - animationDuration;
+        animationDurationSum += animationDuration;
+
+        if (animationDurationSum >= 0.25)
+        {
+            tmp2 += animation.at(animationFrame++);
+            animationDurationSum = 0.0;
+        }
+        else
+            tmp2 += animation.at(animationFrame);
+
+        if (animationFrame >= animation.size())
+            animationFrame = 0;
+
+        ImGui::Text("Calculating... Please wait."); // TODO procent bar?
+        ImGui::SameLine();
+        ImGui::Text(tmp2.c_str());
+
+        animationDuration = t1;
+    }
+    else
+    {
+        //std::string tmp1("Time ->\t");
+        tmp1 += std::to_string(duration);
+        tmp1 += "[s]";
+        ImGui::Text(tmp1.c_str());
+    }
 
     if (ImGui::Button("Free threads"))
         startProcedure = false;
 
-    //ImGui::End();
-
+    ImGui::End();
     //times.push_back(std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count());
 
     //double sum = std::accumulate(times.begin(), times.end(), 0.0);
@@ -256,7 +317,7 @@ void Client::loop()
         //if (startProcedure)
         //    this->drawComputingFrame();
         
-        std::cout << this->A << "\t|\t" << this->B << std::endl;
+        //std::cout << this->A << "\t|\t" << this->B << std::endl;
 
         // Rendering
         ImGui::Render();

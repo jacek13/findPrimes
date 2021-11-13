@@ -28,7 +28,7 @@
 #endif
 
 // SDL
-#include "C:\VisualStudioSDL2.0.17\include\SDL.h"
+#include "../VisualStudioSDL2.0.17/include/SDL.h"
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
 #endif
