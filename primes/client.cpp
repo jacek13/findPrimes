@@ -28,6 +28,7 @@ Client::Client(char** _args, int _argc)
     windowW = 800;
     windowH = 600;
     libSelection = 0;
+    architectureSelection = 0;
     threadSlider = 1;
     A = 0;
     B = 100;
@@ -132,11 +133,17 @@ void Client::drawContent()
     ImGui::Text("Select library:");                 ImGui::SameLine();
     ImGui::RadioButton("ASM", &libSelection, 0);    ImGui::SameLine();
     ImGui::RadioButton("C/C++", &libSelection, 1);
+    if (libSelection == 0)
+    {
+        ImGui::Text("Select proccesor architecture:");           ImGui::SameLine();
+        ImGui::RadioButton("x86", &architectureSelection, 0);    ImGui::SameLine();
+        ImGui::RadioButton("x64", &architectureSelection, 1);
+    }
     ImGui::Separator();
 
     ImGui::Text("Select number of threads:");
     ImGui::SliderInt("slider int", &threadSlider, 1, model->getMaximumNumberOfThreads());
-    ImGui::SameLine(); HelpMarker("CTRL+click to input value. TODO dodaj ograniczenia!");
+    ImGui::SameLine(); HelpMarker("CTRL+click to input value.!");
     ImGui::Separator();
 
     ImGui::Text("Select Interval:");
@@ -177,7 +184,10 @@ void Client::callComputing()
     if (libSelection)
         model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "C++");
     else
+    {
+        model->setASMType(architectureSelection);
         model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "ASM");
+    }
     auto t2 = std::chrono::high_resolution_clock::now();
     this->duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
     showProgress = false;
@@ -298,8 +308,13 @@ void Client::loop()
         this->drawMenuBar();
         this->drawContent();
 
-        if (ImGui::Button("FIND PRIMES!"))
-            startCalculating = startProcedure = true;
+        if ((this->A < this->B) && (threadSlider >= 1 && threadSlider <= model->getMaximumNumberOfThreads()))
+        {
+            if (ImGui::Button("FIND PRIMES!"))
+                startCalculating = startProcedure = true;
+        }
+        else
+            ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Invalid Input!");
 
         if (savePath)
         {

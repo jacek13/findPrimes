@@ -8,9 +8,25 @@ Model::Model()
 std::vector<size_t> Model::findPrimesInRangeCallASM(size_t _a, size_t _b)
 {
     std::vector<size_t> r;
-    for (size_t i = _a; i <= _b; i++)
-        if (isPrimeASM(i))
-            r.push_back(i);
+    if (this->_x64)
+    {
+        for (size_t i = _a; i <= _b; i += 2)
+            if (primeTestASM64(i, i + 1) == 1)
+                r.push_back(i);
+            else if (primeTestASM64(i, i + 1) == 2)
+                r.push_back(i + 1);
+            else if (primeTestASM64(i, i + 1) == 3)
+            {
+                r.push_back(i);
+                r.push_back(i + 1);
+            }
+    }
+    else
+    {
+        for (size_t i = _a; i <= _b; i++)
+            if (isPrimeASM86(i))
+                r.push_back(i);
+    }
     return r;
 }
 
@@ -57,6 +73,11 @@ void Model::findPrimeNumbersParallel(   size_t _a,
         threads.pop_back();
 
     //return r;
+}
+
+void Model::setASMType(bool _type)
+{
+    this->_x64 = _type;
 }
 
 size_t Model::getMaximumNumberOfThreads()

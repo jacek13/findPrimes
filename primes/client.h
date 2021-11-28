@@ -18,7 +18,7 @@
 #include "model.h"
 
 #define IM_PRIu64   "I64u"
-#define VERSION "0.04"
+#define VERSION "0.05"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -36,6 +36,7 @@ private:
     unsigned windowW;
     unsigned windowH;
     int libSelection;
+    int architectureSelection;
     int threadSlider;
     unsigned long long A;
     unsigned long long B;
