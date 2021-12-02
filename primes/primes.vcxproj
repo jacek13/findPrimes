@@ -83,8 +83,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\VisualStudioSDL2.0.17\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\VisualStudioSDL2.0.17\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\primes\VisualStudioSDL2.0.17\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\primes\VisualStudioSDL2.0.17\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -139,6 +139,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\..\primes\primesCPP</AdditionalIncludeDirectories>
       <Optimization>Custom</Optimization>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
