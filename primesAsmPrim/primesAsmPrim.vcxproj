@@ -142,6 +142,7 @@
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>mydll.def</ModuleDefinitionFile>
       <EntryPointSymbol>DllEntry</EntryPointSymbol>
+      <NoEntryPoint>true</NoEntryPoint>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,6 +164,7 @@
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>mydll.def</ModuleDefinitionFile>
       <EntryPointSymbol>DllEntry</EntryPointSymbol>
+      <NoEntryPoint>true</NoEntryPoint>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

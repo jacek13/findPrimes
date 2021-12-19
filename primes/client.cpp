@@ -179,6 +179,9 @@ void Client::drawReadmeFrame()
 void Client::callComputing()
 {
     this->duration = 0.0;
+    std::string pathFromUser(buf1);
+    if (pathFromUser.size())
+        model->setOutputPath(pathFromUser);
 
     auto t1 = std::chrono::high_resolution_clock::now();    // TODO timer!
     if (libSelection)
@@ -308,10 +311,12 @@ void Client::loop()
         this->drawMenuBar();
         this->drawContent();
 
-        if ((this->A < this->B) && (threadSlider >= 1 && threadSlider <= model->getMaximumNumberOfThreads()))
+        if ((this->A < this->B) && (threadSlider >= 1 && threadSlider <= 64))
         {
             if (ImGui::Button("FIND PRIMES!"))
                 startCalculating = startProcedure = true;
+            if (threadSlider > model->getMaximumNumberOfThreads())
+                ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Note, the number of threads entered exceeds the number of logical threads provided by the processor!");
         }
         else
             ImGui::TextColored(ImVec4(0.90f, 0.0f, 0.0f, 1.0f), "Invalid Input!");
