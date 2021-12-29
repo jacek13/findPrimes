@@ -18,7 +18,7 @@
 #include "model.h"
 
 #define IM_PRIu64   "I64u"
-#define VERSION "0.06"
+#define VERSION "1.00"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -35,6 +35,7 @@ private:
     unsigned animationFrame;
     unsigned windowW;
     unsigned windowH;
+    unsigned numberOfCalculations;
     int libSelection;
     int architectureSelection;
     int threadSlider;
@@ -43,6 +44,7 @@ private:
     double duration;
     double animationDuration;
     double animationDurationSum;
+    bool useScriptVersion;
 
     bool show_demo_window = true;
     bool show_another_window = false;
@@ -68,25 +70,27 @@ private:
     bool showProgress;
     bool done;
 
+    // SDL structures
     SDL_Event event;
     SDL_WindowFlags window_flags;
     SDL_Window* window;
     SDL_Renderer* renderer;
 
-    //ImGuiIO & io;
+    // DearImGui
     ImGuiWindowFlags window_flags_imGui;
     ImGuiViewport* viewport;
     ImVec4 clear_color;
 
     Model * model;
 
-	// methods
+	// Methods
 	void HelpMarker(const char* _message) noexcept;
-    void drawMenuBar(); //TODO take it to View
+    void drawMenuBar();
     void drawContent();
     void drawReadmeFrame();
     void drawComputingFrame();
     void callComputing();
+    bool checkInput();
 
 public:
 	Client(char ** _args, int _argc);

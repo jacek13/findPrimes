@@ -15,21 +15,76 @@ void Client::HelpMarker(const char* _message) noexcept
     }
 }
 
+bool Client::checkInput()
+{
+    bool disableGui = false;
+    unsigned countOperations = 0;
+
+    for (int i = 0; i < args.size(); i++)
+    {
+        if (args.at(i) == "-begin" && (i + 1) <= args.size())
+        {
+            A = std::stol(args.at(i + 1));
+            ++countOperations;
+        }
+        if (args.at(i) == "-end" && (i + 1) <= args.size())
+        {
+            B = std::stol(args.at(i + 1));
+            ++countOperations;
+        }
+        if (args.at(i) == "-N" && (i + 1) <= args.size())
+        {
+            numberOfCalculations = std::stoi(args.at(i + 1));
+            ++countOperations;
+        }
+        if (args.at(i) == "-dll" && (i + 1) <= args.size())
+        {
+            if (args.at(i + 1) == "C/C++")
+            {
+                libSelection = 1;
+                ++countOperations;
+            }
+            else if (args.at(i + 1) == "ASM")
+            {
+                libSelection = 0;
+                ++countOperations;
+            }
+        }
+        if (args.at(i) == "-T" && (i + 1) <= args.size())
+        {
+            threadSlider = std::stoi(args.at(i + 1));
+            ++countOperations;
+        }
+        if (args.at(i) == "-o" && (i + 1) <= args.size())
+        {
+            for (int j = 0; j < args.at(i + 1).size(); j++)
+                buf1[j] = args.at(i + 1).at(j);
+        }
+        if (args.at(i) == "-x86")
+            architectureSelection = 0;
+        if (args.at(i) == "-x64")
+            architectureSelection = 1;
+    }
+
+    return countOperations == 5 ? true : false;
+}
+
 Client::Client(char** _args, int _argc)
 {
     clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    //myWindow
+    for (int i = 0; i < _argc; i++)
+    {
+        args.push_back(_args[i]);
+    }
+    //checkInput();
     buf1[64];
-    //for (size_t i = 0; i < 64; i++)
-    //    buf1[i] = ' ';
     windowName = "Find primes ";
     windowName += VERSION;
     windowW = 800;
     windowH = 600;
     libSelection = 0;
     architectureSelection = 0;
-    threadSlider = 1;
     A = 0;
     B = 100;
     animationFrame = 0;
@@ -37,44 +92,62 @@ Client::Client(char** _args, int _argc)
     animationDurationSum = 0.0;
     duration = 0.0;
 
-    // Demonstrate the various window flags. Typically you would just use the default!
-    no_titlebar         = true;
-    no_scrollbar        = true;
-    no_menu             = true;
-    no_move             = true;
-    no_resize           = true;
-    no_collapse         = true;
-    no_close            = false;
-    no_nav              = false;
-    no_background       = false;
-    no_bring_to_front   = false;
-    no_docking          = false;
-    unsaved_document    = false;
-    savePath            = false;
-    exitProgram         = false;
-    displayHelp         = false;
-    displayReadMe       = false;
-    startProcedure      = false;
-    startCalculating    = false;
-    showProgress        = false;
+    // New model for calculations
+    model = new Model();
 
-    window_flags_imGui = 0;
-    if (no_titlebar)        window_flags_imGui |= ImGuiWindowFlags_NoTitleBar;
-    if (no_scrollbar)       window_flags_imGui |= ImGuiWindowFlags_NoScrollbar;
-    if (!no_menu)           window_flags_imGui |= ImGuiWindowFlags_MenuBar;
-    if (no_move)            window_flags_imGui |= ImGuiWindowFlags_NoMove;
-    if (no_resize)          window_flags_imGui |= ImGuiWindowFlags_NoResize;
-    if (no_collapse)        window_flags_imGui |= ImGuiWindowFlags_NoCollapse;
-    if (no_nav)             window_flags_imGui |= ImGuiWindowFlags_NoNav;
-    if (no_background)      window_flags_imGui |= ImGuiWindowFlags_NoBackground;
-    if (no_bring_to_front)  window_flags_imGui |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-    if (no_docking)         window_flags_imGui |= ImGuiWindowFlags_NoDocking;
-    if (unsaved_document)   window_flags_imGui |= ImGuiWindowFlags_UnsavedDocument;
+    threadSlider = model->getMaximumNumberOfThreads();
 
+    try
+    {
+        useScriptVersion = checkInput();
+    }
+    catch (std::invalid_argument& e)
+    {
+        std::cerr << "INPUT ERROR -> invalid argument: " << e.what() << std::endl;
+    }
+    catch (std::out_of_range& e)
+    {
+        std::cerr << "INPUT ERROR -> out of range: " << e.what() << std::endl;
+    }
+
+    if (!useScriptVersion)
+    {
+        // Demonstrate the various window flags. Typically you would just use the default!
+        no_titlebar = true;
+        no_scrollbar = true;
+        no_menu = true;
+        no_move = true;
+        no_resize = true;
+        no_collapse = true;
+        no_close = false;
+        no_nav = false;
+        no_background = false;
+        no_bring_to_front = false;
+        no_docking = false;
+        unsaved_document = false;
+        savePath = false;
+        exitProgram = false;
+        displayHelp = false;
+        displayReadMe = false;
+        startProcedure = false;
+        startCalculating = false;
+        showProgress = false;
+
+        window_flags_imGui = 0;
+        if (no_titlebar)        window_flags_imGui |= ImGuiWindowFlags_NoTitleBar;
+        if (no_scrollbar)       window_flags_imGui |= ImGuiWindowFlags_NoScrollbar;
+        if (!no_menu)           window_flags_imGui |= ImGuiWindowFlags_MenuBar;
+        if (no_move)            window_flags_imGui |= ImGuiWindowFlags_NoMove;
+        if (no_resize)          window_flags_imGui |= ImGuiWindowFlags_NoResize;
+        if (no_collapse)        window_flags_imGui |= ImGuiWindowFlags_NoCollapse;
+        if (no_nav)             window_flags_imGui |= ImGuiWindowFlags_NoNav;
+        if (no_background)      window_flags_imGui |= ImGuiWindowFlags_NoBackground;
+        if (no_bring_to_front)  window_flags_imGui |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+        if (no_docking)         window_flags_imGui |= ImGuiWindowFlags_NoDocking;
+        if (unsaved_document)   window_flags_imGui |= ImGuiWindowFlags_UnsavedDocument;
+    }
     // Main loop
     done = false;
-
-    model = new Model();
 }
 
 void Client::init()
@@ -112,7 +185,6 @@ void Client::drawMenuBar()
     {
         if (ImGui::BeginMenu("Menu"))
         {
-            //ShowExampleMenuFile();
             ImGui::MenuItem("Write output path", "", &savePath);
             ImGui::MenuItem("Exit", "", &exitProgram);
             ImGui::EndMenu();
@@ -183,7 +255,7 @@ void Client::callComputing()
     if (pathFromUser.size())
         model->setOutputPath(pathFromUser);
 
-    auto t1 = std::chrono::high_resolution_clock::now();    // TODO timer!
+    auto t1 = std::chrono::high_resolution_clock::now();
     if (libSelection)
         model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "C++");
     else
@@ -203,7 +275,6 @@ void Client::drawComputingFrame()
     ImGui::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
 
     ImGui::Begin("Computing...", NULL, window_flags_imGui);
-    //std::vector<double> times;
 
     std::string tmp0("Calling for ->\t");
     std::string tmp1("Time ->\t");
@@ -224,20 +295,6 @@ void Client::drawComputingFrame()
         startCalculating = false;
         showProgress = true;
     }
-    //taskCalculating
-    //taskCalculating.detach();
-
-    //if (startCalculating)
-    //{
-    //    auto t1 = std::chrono::high_resolution_clock::now();    // TODO timer!
-    //    if (libSelection)
-    //        model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "C++");
-    //    else
-    //        model->findPrimeNumbersParallel(this->A, this->B, this->threadSlider, "ASM");
-    //    auto t2 = std::chrono::high_resolution_clock::now();
-    //    duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count();
-    //    startCalculating = false;
-    //}
 
     if (showProgress)
     {
@@ -257,7 +314,7 @@ void Client::drawComputingFrame()
         if (animationFrame >= animation.size())
             animationFrame = 0;
 
-        ImGui::Text("Calculating... Please wait."); // TODO procent bar?
+        ImGui::Text("Calculating... Please wait.");
         ImGui::SameLine();
         ImGui::Text(tmp2.c_str());
 
@@ -265,7 +322,6 @@ void Client::drawComputingFrame()
     }
     else
     {
-        //std::string tmp1("Time ->\t");
         tmp1 += std::to_string(duration);
         tmp1 += "[s]";
         ImGui::Text(tmp1.c_str());
@@ -275,11 +331,6 @@ void Client::drawComputingFrame()
         startProcedure = false;
 
     ImGui::End();
-    //times.push_back(std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1).count());
-
-    //double sum = std::accumulate(times.begin(), times.end(), 0.0);
-    //double average = (double)sum / (double)times.size();
-    //std::cout << "\n AVERAGE ->\t" << average << "[s]" << std::endl;
 }
 
 void Client::loop()
@@ -334,10 +385,6 @@ void Client::loop()
 
         if (displayReadMe)
             this->drawReadmeFrame();
-        //if (startProcedure)
-        //    this->drawComputingFrame();
-        
-        //std::cout << this->A << "\t|\t" << this->B << std::endl;
 
         // Rendering
         ImGui::Render();
