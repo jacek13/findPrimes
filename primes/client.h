@@ -18,7 +18,7 @@
 #include "model.h"
 
 #define IM_PRIu64   "I64u"
-#define VERSION "1.00"
+#define VERSION "1.01"
 
 #if !SDL_VERSION_ATLEAST(2,0,17)
 #error This backend requires SDL 2.0.17+ because of SDL_RenderGeometry() function
@@ -90,6 +90,8 @@ private:
     void drawReadmeFrame();
     void drawComputingFrame();
     void callComputing();
+    double scriptComputing();
+    void drawWaitAnimation(std::ostream& _stream, bool * endFlag);
     bool checkInput();
 
 public:

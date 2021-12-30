@@ -29,10 +29,10 @@ bool fileSystem::saveCSV(std::vector<size_t>& _primes, char _separator)
 
 	if (file.good())
 	{
-		if (notExist)
+		//if (notExist)
 			file << "Index" << _separator << "Number" << std::endl;
 		for(size_t i = 0; i < _primes.size(); i++)
-			file << i << _separator << _primes.at(i) << std::endl;
+			file << i + 1 << _separator << _primes.at(i) << std::endl;
 	}
 	else
 	{
