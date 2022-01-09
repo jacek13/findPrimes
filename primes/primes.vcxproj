@@ -80,11 +80,14 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\VisualStudioSDL2.0.17\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\VisualStudioSDL2.0.17\lib\x64;$(LibraryPath)</LibraryPath>
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\primes\VisualStudioSDL2.0.17\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\primes\VisualStudioSDL2.0.17\lib\x64;$(LibraryPath)</LibraryPath>
+    <CopyLocalDebugSymbols>false</CopyLocalDebugSymbols>
+    <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -186,6 +189,10 @@
     <Text Include="imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\VisualStudioSDL2.0.17\lib\x64\SDL2.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+    </None>
     <None Include="imgui\debuggers\imgui.gdb" />
     <None Include="imgui\debuggers\imgui.natstepfilter" />
   </ItemGroup>

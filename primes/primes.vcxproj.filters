@@ -117,6 +117,9 @@
     <None Include="imgui\debuggers\imgui.natstepfilter">
       <Filter>DearImGui\debbugers</Filter>
     </None>
+    <None Include="..\VisualStudioSDL2.0.17\lib\x64\SDL2.dll">
+      <Filter>Pliki zasobów</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="imgui\debuggers\imgui.natvis">

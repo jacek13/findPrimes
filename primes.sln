@@ -4,10 +4,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "primes", "primes\primes.vcxproj", "{31095BDC-6DD5-46C8-824E-4412C03061E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{559A7910-1437-4B40-98B2-88DFC0499FA1} = {559A7910-1437-4B40-98B2-88DFC0499FA1}
+		{7563DAA3-FA2F-412C-8D06-91E11E3D5A4D} = {7563DAA3-FA2F-412C-8D06-91E11E3D5A4D}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "primesCPP", "primesCPP\primesCPP.vcxproj", "{7563DAA3-FA2F-412C-8D06-91E11E3D5A4D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "primesAsmPrim", "primesAsmPrim\primesAsmPrim.vcxproj", "{559A7910-1437-4B40-98B2-88DFC0499FA1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "primesASM", "primesAsmPrim\primesAsmPrim.vcxproj", "{559A7910-1437-4B40-98B2-88DFC0499FA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
