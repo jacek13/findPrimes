@@ -36,7 +36,7 @@ do
         switch($i)
         {
             1 {$dllType = "C/C++"}
-            2 {$dllType = "ASM"}
+            2 {$dllType = "ASM"; $architectureType = "-x86"}
             3 {$architectureType = "-x64"}
         }
          & "..\primes\x64\Release\primes.exe" -begin $begin -end $end -dll $dllType -T $threads -N $numberOfCalculations $architectureType
