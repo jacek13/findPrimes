@@ -30,8 +30,8 @@ graphical interface enabled or disabled.
 
 ## **Graphical interface Demo**
 
-![zdjecie](https://drive.google.com/file/d/1cROZmbmwsl0cWFum0qu8SeUdzvVBzSHp/view?usp=sharing)
+![zdjecie](https://s7.gifyu.com/images/primes_gui_demo.gif)
 
 ## **Script Demo**
 
-![zdjecie](https://drive.google.com/file/d/1MaRNc63dm5kpo-r_yzsO1j3ZEh1zyuJp/view?usp=sharing)
+![zdjecie](https://s7.gifyu.com/images/primes_script_demo.gif)
