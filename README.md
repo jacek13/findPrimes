@@ -1,6 +1,6 @@
 # **Project description**
 
-The topic of my project was searching for prime numbers in a given range. The main goal of the project was to implement vector instructions related to the **SIMD** (Single Instruction, Multiple Data) architecture. It should have been done using x64 assembler.
+The topic of my project was searching for prime numbers in a given range. The main goal of the project was to implement `parallel computing` and  `vector instructions related to the SIMD` (Single Instruction, Multiple Data) architecture. It should have been done using x64 assembler.
 
 ---
 
@@ -30,8 +30,8 @@ graphical interface enabled or disabled.
 
 ## **Graphical interface Demo**
 
-![zdjecie](https://s7.gifyu.com/images/primes_gui_demo.gif)
+![zdjecie](resources/UI_DEMO.gif)
 
 ## **Script Demo**
 
-![zdjecie](https://s7.gifyu.com/images/primes_script_demo.gif)
+![zdjecie](resources/SCRIPT_DEMO.gif)
